@@ -16,7 +16,6 @@ tmp
 main
 jobs/main
 main
-cv-auth
 *.pids
 circleci
 *.log.gz
