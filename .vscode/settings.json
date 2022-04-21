@@ -1,0 +1,15 @@
+{
+    "[go]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "golang.go",
+        "editor.formatOnSave": true,
+    },
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#5272B4",
+        "titleBar.activeForeground": "#000000",
+        "activityBar.background": "#5272B4",
+        "activityBar.foreground": "#000000"
+    },
+}
