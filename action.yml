@@ -1,0 +1,177 @@
+name: "Code Coverage Dashboard"
+author: "rakutentech"
+description: "publish coverage result to the code coverage dashboard server"
+branding:
+  icon: 'percent'
+  color: 'green'
+
+inputs:
+  api_host:
+    description: "API host (ex. https://<your-host>/coverages-api)"
+    required: true
+  language:
+    description: "Language type (go / php /js)"
+    required: false # require for push, pull_request
+    default: "go"
+  report_dir:
+    description: "Coverage report directory"
+    required: false # require for push, pull_request
+    default: "build"
+  coverage_xml_file_name:
+    description: "Coverage xml file name"
+    required: false # require for push, pull_request
+    default: "coverage.xml"
+  ### Optional
+  working_dir:
+    description: "working directory"
+    required: false
+    default: "./"
+  report_html_path:
+    description: "Coverage report path from directory root"
+    required: false
+    default: ""
+
+outputs:
+  coverage_result:
+    description: "Coverage result"
+    value: ${{ steps.publish_coverage.outputs.coverage_result }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate input parameters
+      run: |
+        supported_languages=("go" "php" "js")
+        echo "Given parameters:"
+        echo "  variables:"
+        echo "    event_name            : ${{ github.event_name }}"
+        echo "    repository_owner      : ${{ github.repository_owner }}"
+        echo "    repository_name       : ${{ github.event.repository.name }}"
+        echo "    actor                 : ${{ github.actor }}"
+        echo "    supported_languages   : ${supported_languages[@]}"
+        echo "  inputs:"
+        echo "    api_host              : ${{ inputs.api_host }}"
+        echo "    language              : ${{ inputs.language }}"
+        echo "    report_dir            : ${{ inputs.report_dir }}"
+        echo "    coverage_xml_file_name: ${{ inputs.coverage_xml_file_name }}"
+        echo "    report_html_path      : ${{ inputs.report_html_path }}"
+
+        err_msg=""
+        if [[ "${{ github.event_name }}" != "delete" ]]; then
+          [ -z "${{ inputs.api_host }}" ] && err_msg="api_host is required"
+          [[ ! " ${supported_languages[*]} " =~ " ${{ inputs.language }} " ]] && err_msg="language supports go, php or js"
+          [ -z "${{ inputs.report_dir }}" ] && err_msg="report_dir is required"
+          [ -z "${{ inputs.coverage_xml_file_name }}" ] && err_msg="coverage_xml_file_name is required"
+
+          if [ -n "${err_msg}" ]; then
+            echo "${err_msg}"
+            exit 1
+          fi
+        fi;
+      shell: bash
+
+    - name: Tar coverage folder
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
+      working-directory: "${{ inputs.working_dir }}"
+      run: |
+        tar -zcf ${{ inputs.report_dir }}.tar.gz ${{ inputs.report_dir }}
+      shell: bash
+
+    - id: branch-name
+      name: Get branch name
+      uses: tj-actions/branch-names@v5.2
+
+    - id: publish_coverage
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
+      name: Publish Code Coverage
+      working-directory: "${{ inputs.working_dir }}"
+      run: |
+        curl \
+        -X POST \
+        -H 'Content-Type: multipart/form-data' \
+        -H 'Authorization: ${{ github.token }}' \
+        --form file=@${{ inputs.report_dir }}.tar.gz \
+        "${{ inputs.api_host }}\
+        ?org_name=${{ github.repository_owner }}\
+        &github_api_url=${{ github.api_url }}\
+        &branch_name=${{ steps.branch-name.outputs.current_branch }}\
+        &repo_name=${{ github.event.repository.name }}\
+        &commit_hash=${{ github.sha }}\
+        &commit_author=${{ github.actor }}\
+        &language=${{ inputs.language }}\
+        &coverage_xml_file_name=${{ inputs.coverage_xml_file_name }}" > coverage-api-output.json
+        echo "##[set-output name=coverage_result]$(cat coverage-api-output.json)"
+      shell: bash
+
+    # on pull request: To issue comment on pull_request
+    - name: Install jq
+      if: github.event_name == 'pull_request'
+      uses: sergeysova/jq-action@v2
+
+    - id: set_coverage_comment
+      name: Set Coverage Comment
+      if: github.event_name == 'pull_request'
+      shell: bash
+      working-directory: "${{ inputs.working_dir }}"
+      run: |
+        current_branch_percent=$(cat coverage-api-output.json|jq .coverage.percentage)
+        base_branch_percent=$(cat coverage-api-output.json|jq -re '.data[] |select(.branch_name == "${{ github.event.pull_request.base.ref }}").percentage')
+        improvement=$(printf "%.2f" $(jq -n "${base_branch_percent} - ${current_branch_percent}"))
+        current_branch_name="${{ steps.branch-name.outputs.current_branch }}"
+        base_branch_name="${{ github.event.pull_request.base.ref }}"
+        echo "##[set-output name=coverage_badge;]${current_branch_percent}"
+        echo "##[set-output name=base_branch_percent;]${base_branch_percent}"
+        echo "##[set-output name=improvement;]${improvement}"
+        echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
+        echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
+
+    - name: Add comment
+      if: github.event_name == 'pull_request'
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        # TODO: Update view code coverage link to UI link
+        body: |
+          ![Badge](${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ github.event.pull_request.base.ref }}&repo_name=${{ github.event.repository.name }}&language=${{ inputs.language }}) ![Badge](${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ steps.branch-name.outputs.current_branch }}&repo_name=${{ github.repository }}&language=${{ inputs.language }}&subtitle=${{ steps.set_coverage_comment.outputs.coverage_badge }}%25)
+
+          :rocket: [View Code Coverage](${{ inputs.api_host }}/assets/${{github.repository_owner}}/${{ github.event.repository.name }}/)
+
+          |__Branch__|__Coverage (%)__|__Improvement (%)__|
+          |:--|---:|---:|
+          | [${{ github.event.pull_request.base.ref }}](${{ steps.set_coverage_comment.outputs.base_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.coverage_badge }}% | - |
+          | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.base_branch_percent }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
+
+    # on delete: sync branches
+    - name: Set up Python
+      if: github.event_name == 'delete'
+      uses: actions/setup-python@v2
+      with:
+        python-version: 2.x
+        architecture: x64
+
+    - id: set_branches
+      name: Extract all branches to json array
+      if: github.event_name == 'delete'
+      shell: bash
+      # https://stackoverflow.com/a/32354503
+      run: |
+        git config remote.origin.prune true
+        git fetch
+        echo "##[set-output name=branches;]$(git branch -r |sed 's/origin\///'|python -c 'import sys, json; print json.dumps([line for line in sys.stdin.read().split()])')"
+
+    - name: Sync Code Coverage
+      if: github.event_name == 'delete'
+      shell: bash
+      run: |
+        curl \
+        -X PUT \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: ${{ github.token }}' \
+        -d '{
+          "org_name": "${{github.repository_owner}}",
+          "github_api_url": "${{github.api_url}}",
+          "commit_hash": "${{ github.sha }}",
+          "repo_name": "${{ github.event.repository.name }}",
+          "active_branches": ${{ steps.set_branches.outputs.branches }}
+        }' \
+        "${{ inputs.api_host }}"
