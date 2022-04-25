@@ -14,7 +14,7 @@ Responds with the coverages for this org/repo for all branches.
 curl -X POST -H 'Content-Type: multipart/form-data' -H 'Authorization: GITHUB_TOKEN' \
 --form file=@/Users/pulkit.kathuria/git/code-coverage-dashboard/server/test_data/go_coverage.tar.gz \
 "localhost:3000/coverages-api\
-?org_name=rakuten\
+?org_name=rakutentech\
 &branch_name=develop\
 &github_api_url=https://api.github.com\
 &repo_name=laravel-request-docs\
