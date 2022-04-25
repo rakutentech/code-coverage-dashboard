@@ -6,8 +6,7 @@
 <meta name=color-scheme content="light dark">
 <meta name=generator content="Hugo 0.91.2">
 <meta name=description content="To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.
-※ Please refer here about how to host the Code Coverage Dashboard server.
-on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment.">
+on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.">
 <title>Github Actions | Code Coverage Dashboard</title>
 <link rel=icon type=image/svg+xml href=/code-coverage-dashboard/favicon/favicon.svg>
 <link rel=icon type=image/png sizes=32x32 href=/code-coverage-dashboard/favicon/favicon-32x32.png>
@@ -15,17 +14,15 @@ on push / on pull request : Publish code coverage report     The Action triggere
 <meta property="og:title" content="Github Actions">
 <meta property="og:site_name" content="Code Coverage Dashboard">
 <meta property="og:description" content="To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.
-※ Please refer here about how to host the Code Coverage Dashboard server.
-on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment.">
+on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://rakutentech.github.io/code-coverage-dashboard/usage/installation/">
 <meta property="article:section" content="Usage">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Github Actions">
 <meta name=twitter:description content="To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.
-※ Please refer here about how to host the Code Coverage Dashboard server.
-on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment.">
-<script type=application/ld+json>{"@context":"http://schema.org","@type":"TechArticle","articleSection":"Usage","name":"Github Actions","url":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/","headline":"Github Actions","description":"To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.\n※ Please refer here about how to host the Code Coverage Dashboard server.\non push \/ on pull request : Publish code coverage report     The Action triggered by on push \/ on pull request will post a report to the Code Coverage Dashboard that hosted on your environment.","wordCount":"253","inLanguage":"en","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/"},"copyrightHolder":"Code Coverage Dashboard","copyrightYear":"0001","dateCreated":"0001-01-01T00:00:00.00Z","datePublished":"0001-01-01T00:00:00.00Z","dateModified":"0001-01-01T00:00:00.00Z","publisher":{"@type":"Organization","name":"Code Coverage Dashboard","url":"https://rakutentech.github.io/code-coverage-dashboard/","logo":{"@type":"ImageObject","url":"https://rakutentech.github.io/code-coverage-dashboard/brand.svg","width":"32","height":"32"}}}</script>
+on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.">
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"TechArticle","articleSection":"Usage","name":"Github Actions","url":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/","headline":"Github Actions","description":"To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.\non push \/ on pull request : Publish code coverage report     The Action triggered by on push \/ on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.","wordCount":"240","inLanguage":"en","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/"},"copyrightHolder":"Code Coverage Dashboard","copyrightYear":"0001","dateCreated":"0001-01-01T00:00:00.00Z","datePublished":"0001-01-01T00:00:00.00Z","dateModified":"0001-01-01T00:00:00.00Z","publisher":{"@type":"Organization","name":"Code Coverage Dashboard","url":"https://rakutentech.github.io/code-coverage-dashboard/","logo":{"@type":"ImageObject","url":"https://rakutentech.github.io/code-coverage-dashboard/brand.svg","width":"32","height":"32"}}}</script>
 <script src=/code-coverage-dashboard/js/main-88a42144.bundle.min.js></script>
 <link rel=preload as=font href=/code-coverage-dashboard/fonts/Metropolis.woff2 type=font/woff2 crossorigin=anonymous>
 <link rel=preload as=font href=/code-coverage-dashboard/fonts/LiberationSans.woff2 type=font/woff2 crossorigin=anonymous>
@@ -248,7 +245,6 @@ hidden-mobile" itemprop=breadcrumb>
 <br>
 <p>To use the Code Coverage Dashboard,
 you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.</p>
-<p>※ Please refer <a class=gdoc-markdown__link href=../getting_started/installation.md>here</a> about how to host the Code Coverage Dashboard server.</p>
 <br>
 <div class=gdoc-page__anchorwrap>
 <h1 id=__on-push--on-pull-request__--publish-code-coverage-report>
