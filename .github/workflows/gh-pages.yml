@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - master
+name: "CI"
+
+jobs:
+  publish-docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      working_directory: ./docs
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.91.2'
+
+      - name: Install theme
+        working-directory: ${{env.working_directory}}
+        run: |
+         mkdir -p themes/hugo-geekdoc/
+         curl -L https://github.com/thegeeklab/hugo-geekdoc/releases/latest/download/hugo-geekdoc.tar.gz | tar -xz -C themes/hugo-geekdoc/ --strip-components=1
+
+      - name: Build
+        working-directory: ${{env.working_directory}}
+        run: hugo --minify
+
+      - name: .nojekyll
+        run: touch ./docs/public/.nojekyll
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/public
+          publish_branch: gh-pages

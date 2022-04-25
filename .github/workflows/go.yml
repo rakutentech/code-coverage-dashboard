@@ -1,0 +1,49 @@
+on: [push]
+name: "CI"
+
+jobs:
+  test:
+    name: Test
+    strategy:
+      matrix:
+        go-version: [1.18]
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      working_directory: ./server
+    steps:
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install Tools
+      run: |
+        go install honnef.co/go/tools/cmd/staticcheck@latest
+        go install github.com/securego/gosec/v2/cmd/gosec@latest
+        go install github.com/axw/gocov/gocov@latest
+        go install github.com/AlekSi/gocov-xml@latest
+    - name: Build
+      working-directory: ${{env.working_directory}}
+      run: |
+        go mod tidy
+        go build main.go
+    - name: Static Check
+      working-directory: ${{env.working_directory}}
+      run: |
+         staticcheck ./...
+         go vet -v ./...
+         gosec ./...
+
+    - name: Test
+      working-directory: ${{env.working_directory}}
+      run: |
+        mkdir -p build
+        go test ./... -count=1
+
+
