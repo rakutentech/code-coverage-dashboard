@@ -7,8 +7,6 @@ title: "Github Actions"
 To use the Code Coverage Dashboard,
 you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.
 
-※ Please refer [here](../getting_started/installation.md) about how to host the Code Coverage Dashboard server.
-
 <br>
 
 # __on push / on pull request__ : Publish code coverage report
