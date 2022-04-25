@@ -6,5 +6,5 @@ title: "Deployments"
 
 ```sh
 cd server
-./build.sh && ./restart.sh
+go build main.go && ./start_server.sh
 ```
