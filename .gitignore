@@ -28,3 +28,4 @@ tmp.json
 docs/themes/
 docs/public/
 docs/.hugo_build.lock
+.db-journal
