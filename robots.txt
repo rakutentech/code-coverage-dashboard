@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /tags/*
+
+Sitemap: https://rakutentech.github.io/code-coverage-dashboard/sitemap.xml
