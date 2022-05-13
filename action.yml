@@ -115,13 +115,13 @@ runs:
       working-directory: "${{ inputs.working_dir }}"
       run: |
         current_branch_percent=$(cat coverage-api-output.json|jq .coverage.percentage)
-        base_branch_percent=$(cat coverage-api-output.json|jq -re '.data[] |select(.branch_name == "${{ github.event.pull_request.base.ref }}").percentage')
-        improvement=$(printf "%.2f" $(jq -n "${base_branch_percent} - ${current_branch_percent}"))
+        base_branch_percent=$(cat coverage-api-output.json | jq -r '.data[]? | select(.branch_name == "${{ github.event.pull_request.base.ref }}")? | .percentage // empty')
+        improvement=$(printf "%.2f" $(jq -n "${current_branch_percent:-0} - ${base_branch_percent:-0}"))
         current_branch_name="${{ steps.branch-name.outputs.current_branch }}"
         base_branch_name="${{ github.event.pull_request.base.ref }}"
         echo "##[set-output name=coverage_badge;]${current_branch_percent}"
-        echo "##[set-output name=base_branch_percent;]${base_branch_percent}"
-        echo "##[set-output name=improvement;]${improvement}"
+        echo "##[set-output name=base_branch_percent;]${base_branch_percent:-0}"
+        echo "##[set-output name=improvement;]${improvement:-NaN}"
         echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
         echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
 
@@ -138,16 +138,15 @@ runs:
 
           |__Branch__|__Coverage (%)__|__Improvement (%)__|
           |:--|---:|---:|
-          | [${{ github.event.pull_request.base.ref }}](${{ steps.set_coverage_comment.outputs.base_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.coverage_badge }}% | - |
-          | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.base_branch_percent }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
+          | [${{ github.event.pull_request.base.ref }}](${{ steps.set_coverage_comment.outputs.base_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.base_branch_percent }}% | - |
+          | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.coverage_badge }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
 
     # on delete: sync branches
     - name: Set up Python
       if: github.event_name == 'delete'
       uses: actions/setup-python@v2
       with:
-        python-version: 2.x
-        architecture: x64
+        python-version: 3.x
 
     - id: set_branches
       name: Extract all branches to json array
@@ -157,7 +156,7 @@ runs:
       run: |
         git config remote.origin.prune true
         git fetch
-        echo "##[set-output name=branches;]$(git branch -r |sed 's/origin\///'|python -c 'import sys, json; print json.dumps([line for line in sys.stdin.read().split()])')"
+        echo "##[set-output name=branches;]$(git branch -r |sed 's/origin\///'|python -c 'import sys, json; print(json.dumps([line for line in sys.stdin.read().split()]))')"
 
     - name: Sync Code Coverage
       if: github.event_name == 'delete'
