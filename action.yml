@@ -22,6 +22,10 @@ inputs:
     required: false # require for push, pull_request
     default: "coverage.xml"
   ### Optional
+  ui_host:
+    # If empty, make UI url from api host (<api_host>/../coverages-ui)
+    description: "Code Coverage UI host (ex. https://<your-host>/coverages-ui)"
+    required: false
   working_dir:
     description: "working directory"
     required: false
@@ -76,11 +80,13 @@ runs:
         echo "    supported_languages   : ${supported_languages[@]}"
         echo "  inputs:"
         echo "    api_host              : ${{ inputs.api_host }}"
+        echo "    ui_host               : ${{ inputs.ui_host }}"
         echo "    language              : ${{ inputs.language }}"
         echo "    report_dir            : ${{ inputs.report_dir }}"
         echo "    coverage_xml_file_name: ${{ inputs.coverage_xml_file_name }}"
         echo "    report_html_path      : ${{ inputs.report_html_path }}"
         echo "    skip_pr_comment       : ${{ inputs.skip_pr_comment }}"
+        echo "    working_dir           : ${{ inputs.working_dir }}"
 
         err_msg=""
         if [[ "${{ github.event_name }}" != "delete" ]]; then
@@ -154,6 +160,11 @@ runs:
         echo "##[set-output name=improvement;]${improvement:-NaN}"
         echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
         echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
+        if [[ -n "${{ inputs.ui_host }}" ]]; then
+          echo "##[set-output name=ui_host;]${{ inputs.ui_host }}"
+        else
+          echo "##[set-output name=ui_host;]${{ inputs.api_host }}/../coverages-ui"
+        fi
 
     - name: Add comment
       # NOTE: Given boolean value treat as string value.
@@ -162,11 +173,10 @@ runs:
       uses: peter-evans/create-or-update-comment@v1
       with:
         issue-number: ${{ github.event.pull_request.number }}
-        # TODO: Update view code coverage link to UI link
         body: |
           ![Badge](${{ steps.set_coverage_comment.outputs.base_branch_badge_url }}) ![Badge](${{ steps.set_coverage_comment.outputs.current_branch_badge_url }}%25)
 
-          :rocket: [View Code Coverage](${{ inputs.api_host }}/assets/${{github.repository_owner}}/${{ github.event.repository.name }}/)
+          :rocket: [View Code Coverage](${{ steps.set_coverage_comment.outputs.ui_host }})
 
           |__Branch__|__Coverage (%)__|__Improvement (%)__|
           |:--|---:|---:|
