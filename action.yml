@@ -30,11 +30,36 @@ inputs:
     description: "Coverage report path from directory root"
     required: false
     default: ""
+  skip_pr_comment:
+    description: "If true, not comment on the Pull Request"
+    required: false
+    default: "false"
 
 outputs:
   coverage_result:
     description: "Coverage result"
     value: ${{ steps.publish_coverage.outputs.coverage_result }}
+  base_branch_name:
+    description: "Base branch name"
+    value: ${{ github.event.pull_request.base.ref }}
+  current_branch_name:
+    description: "Current branch name"
+    value: ${{ steps.branch-name.outputs.current_branch }}
+  base_branch_badge_url:
+    description: "Base branch badge URL"
+    value: ${{ steps.set_coverage_comment.outputs.base_branch_badge_url }}
+  current_branch_badge_url:
+    description: "Current branch badge URL"
+    value: ${{ steps.set_coverage_comment.outputs.current_branch_badge_url }}
+  base_branch_report_url:
+    description: "Base branch report URL"
+    value: ${{ steps.set_coverage_comment.outputs.base_branch_report_url }}
+  current_branch_report_url:
+    description: "Current branch report URL"
+    value: ${{ steps.set_coverage_comment.outputs.current_branch_report_url }}
+  improvement:
+    description: "Improvement between current branch and base branch"
+    value: ${{ steps.set_coverage_comment.outputs.improvement }}
 
 runs:
   using: "composite"
@@ -55,6 +80,7 @@ runs:
         echo "    report_dir            : ${{ inputs.report_dir }}"
         echo "    coverage_xml_file_name: ${{ inputs.coverage_xml_file_name }}"
         echo "    report_html_path      : ${{ inputs.report_html_path }}"
+        echo "    skip_pr_comment       : ${{ inputs.skip_pr_comment }}"
 
         err_msg=""
         if [[ "${{ github.event_name }}" != "delete" ]]; then
@@ -119,27 +145,33 @@ runs:
         improvement=$(printf "%.2f" $(jq -n "${current_branch_percent:-0} - ${base_branch_percent:-0}"))
         current_branch_name="${{ steps.branch-name.outputs.current_branch }}"
         base_branch_name="${{ github.event.pull_request.base.ref }}"
-        echo "##[set-output name=coverage_badge;]${current_branch_percent}"
+        current_branch_badge_url="${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ steps.branch-name.outputs.current_branch }}&repo_name=${{ github.repository }}&language=${{ inputs.language }}&subtitle=${current_branch_percent}"
+        base_branch_badge_url="${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ github.event.pull_request.base.ref }}&repo_name=${{ github.event.repository.name }}&language=${{ inputs.language }}"
+        echo "##[set-output name=current_branch_percent;]${current_branch_percent}"
         echo "##[set-output name=base_branch_percent;]${base_branch_percent:-0}"
+        echo "##[set-output name=current_branch_badge_url;]${current_branch_badge_url}"
+        echo "##[set-output name=base_branch_badge_url;]${base_branch_badge_url}"
         echo "##[set-output name=improvement;]${improvement:-NaN}"
         echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
         echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
 
     - name: Add comment
-      if: github.event_name == 'pull_request'
+      # NOTE: Given boolean value treat as string value.
+      #       Please see the detail on this issue https://github.com/actions/runner/issues/1483
+      if: (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true')
       uses: peter-evans/create-or-update-comment@v1
       with:
         issue-number: ${{ github.event.pull_request.number }}
         # TODO: Update view code coverage link to UI link
         body: |
-          ![Badge](${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ github.event.pull_request.base.ref }}&repo_name=${{ github.event.repository.name }}&language=${{ inputs.language }}) ![Badge](${{ inputs.api_host }}/badge?org_name=${{ github.repository_owner }}&branch_name=${{ steps.branch-name.outputs.current_branch }}&repo_name=${{ github.repository }}&language=${{ inputs.language }}&subtitle=${{ steps.set_coverage_comment.outputs.coverage_badge }}%25)
+          ![Badge](${{ steps.set_coverage_comment.outputs.base_branch_badge_url }}) ![Badge](${{ steps.set_coverage_comment.outputs.current_branch_badge_url }}%25)
 
           :rocket: [View Code Coverage](${{ inputs.api_host }}/assets/${{github.repository_owner}}/${{ github.event.repository.name }}/)
 
           |__Branch__|__Coverage (%)__|__Improvement (%)__|
           |:--|---:|---:|
           | [${{ github.event.pull_request.base.ref }}](${{ steps.set_coverage_comment.outputs.base_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.base_branch_percent }}% | - |
-          | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.coverage_badge }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
+          | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.current_branch_percent }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
 
     # on delete: sync branches
     - name: Set up Python
