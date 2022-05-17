@@ -4,9 +4,6 @@ const nextConfig = {
     githubURL: process.env.NEXT_GITHUB_URL,
     apiURL: process.env.NEXT_API_URL,
   },
-  images: {
-    domains: ['i.imgur.com'],
-  },
   reactStrictMode: true,
   basePath: process.env.NEXT_BASE_URI,
   "plugins": [
