@@ -40,8 +40,7 @@ export async function getServerSideProps(context: any) {
     const coverages = await res.json()
     return {
       props: {
-        coverages,
-        coverages,
+        coverages
       },
     }
   }
