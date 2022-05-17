@@ -55,7 +55,7 @@ func (r *CoveragesRepository) NewCoverage(orgName, repoName, branchName, commitH
 }
 
 // PaginateCoverages...
-func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, full bool) (*pagination.Paginator, []models.Coverage, error) {
+func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, full bool, perPage int) (*pagination.Paginator, []models.Coverage, error) {
 	var coverages = []models.Coverage{}
 	query := ""
 	if full {
@@ -77,7 +77,7 @@ func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName s
 	var total int64
 	var paginator = &pagination.Paginator{}
 	r.db.Where(query, orgName, repoName).Find(&coverages).Count(&total)
-	perPage := 15
+	// the implementation is is incomplete, this should paginate by org name instead of branches per repo
 	paginator = pagination.NewPaginator(request, perPage, total)
 	offset := paginator.Offset()
 

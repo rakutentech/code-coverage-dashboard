@@ -47,8 +47,6 @@ func RegisterRoutes(e *echo.Echo) {
 
 	// coverages-api/assets/
 	fileServerReverseProxy(e)
-	// coverages-api/dashboard/
-	nextJSReverseProxy(e)
 }
 
 func fileServerReverseProxy(e *echo.Echo) {
@@ -84,39 +82,5 @@ func fileServerReverseProxy(e *echo.Echo) {
 			return false
 		},
 		Balancer: middleware.NewRoundRobinBalancer([]*middleware.ProxyTarget{{URL: fileServerURL}}),
-	}))
-}
-func nextJSReverseProxy(e *echo.Echo) {
-	conf := config.NewConfig()
-	uri := conf.AppConfig.AppBaseURL + "/dashboard"
-	g := e.Group(uri)
-
-	// Setup reverse proxy
-	nextjsURL, err := url.Parse(conf.AppConfig.NextJSServerURL)
-	if err != nil {
-		panic(err) // should never happen
-	}
-	g.Use(m.SecureMiddleware())
-	g.Use(middleware.ProxyWithConfig(middleware.ProxyConfig{
-		Skipper: func(e echo.Context) bool {
-			if e.Request().Method != http.MethodGet {
-				// skip non GET requests
-				return true
-			}
-			if strings.HasPrefix(e.Request().URL.Path, uri) {
-				if strings.HasPrefix(e.Request().URL.Path, uri+"/") {
-					e.Request().URL.Path = strings.Replace(e.Request().URL.Path, uri, "", 1)
-					ext := filepath.Ext(e.Request().URL.Path)
-					if ext == "" {
-						e.Request().URL.Path = e.Request().URL.Path + "/" // append / to the end
-					}
-				} else {
-					e.Request().URL.Path = strings.Replace(e.Request().URL.Path, uri, "", 1)
-				}
-			}
-			// ok, donot skip this, legit assets reverse proxy call
-			return false
-		},
-		Balancer: middleware.NewRoundRobinBalancer([]*middleware.ProxyTarget{{URL: nextjsURL}}),
 	}))
 }
