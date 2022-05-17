@@ -50,20 +50,20 @@ export const BranchesCoverageTable = (props:Props) => {
                       </td>
                       <td width="10%">
                           {mainPercentage === 0 &&
-                            <span>{parseFloat(data[key].percentage)}%</span>
+                            <span>{parseFloat(data[key].percentage).toFixed(2)}%</span>
                           }
                           {mainPercentage > 0 && mainPercentage ==  parseFloat(data[key].percentage) &&
-                            <span>{data[key].percentage}%</span>
+                            <span>{parseFloat(data[key].percentage).toFixed(2)}%</span>
                           }
                           {mainPercentage > 0 && mainPercentage > parseFloat(data[key].percentage) &&
-                            <b className={styles.text_danger}>{data[key].percentage}% ▼</b>
+                            <b className={styles.text_danger}>{parseFloat(data[key].percentage).toFixed(2)}% ▼</b>
                           }
                           {mainPercentage > 0 && mainPercentage < parseFloat(data[key].percentage) &&
-                            <b className={styles.text_success}>{data[key].percentage}% ▲</b>
+                            <b className={styles.text_success}>{parseFloat(data[key].percentage).toFixed(2)}% ▲</b>
                           }
                       </td>
                       <td width="10%">
-                        <a target="_blank" rel="noreferrer" href={`${apiURL}/assets/${orgName}/${data[key].branch_name.replace (/\//g, "_")}`}>
+                        <a target="_blank" rel="noreferrer" href={`${apiURL}/assets/${orgName}/${data[key].branch_name.replace (/\//g, "_fs_")}`}>
                             artifacts
                         </a>
                         {data[key].link}

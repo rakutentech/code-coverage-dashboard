@@ -1,6 +1,7 @@
 import { RepositoryCoverageCard, BasicHeader, BasicFooter } from '../components'
 import styles from '../styles/Basic.module.css'
 import {Coverage} from '../interfaces/'
+import Head from 'next/head'
 
 interface ServerSideProps {
     coverages: {
@@ -12,17 +13,22 @@ interface ServerSideProps {
 const Home: React.FC<ServerSideProps> = (props) => {
   const { coverages } = props
   return (
-    <div className="container">
-        <BasicHeader />
-        <section>
-        {Object.keys(coverages.data).map(orgName =>
-            <div key={orgName} className="pt-5">
-                <RepositoryCoverageCard orgName={orgName} data={coverages.data[orgName]} />
-            </div>
-        )}
-        </section>
-        <BasicFooter />
-    </div>
+      <>
+        <Head>
+            <title>Code Coverage Dashboard</title>
+        </Head>
+        <div className="container">
+            <BasicHeader />
+            <section>
+            {Object.keys(coverages.data).map(orgName =>
+                <div key={orgName} className="pt-5">
+                    <RepositoryCoverageCard orgName={orgName} data={coverages.data[orgName]} />
+                </div>
+            )}
+            </section>
+            <BasicFooter />
+        </div>
+    </>
   )
 }
 
@@ -34,6 +40,7 @@ export async function getServerSideProps(context: any) {
     const coverages = await res.json()
     return {
       props: {
+        coverages,
         coverages,
       },
     }
