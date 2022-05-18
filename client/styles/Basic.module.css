@@ -1,0 +1,50 @@
+.text_bright {
+    color: #d5dfe8;
+}
+.text_muted {
+    color: #726262;
+}
+.text_danger,
+.text_crimson {
+	color: #dc143c !important;
+}
+
+.text_success {
+	color: #28a745 !important;
+}
+
+.coverage_total {
+	font-size: 40px;
+	font-weight: 700;
+    text-align: center;
+    color: #d5dfe8;
+}
+.coverage_table {
+    border-radius: 3px;
+	font-weight: 100;
+    background-color: #222324;
+}
+.coverage_table > thead > tr > th, .coverage_table > tbody > tr > td {
+    color: #d5dfe8;
+}
+
+.coverage_table > tbody > tr > td {
+    font-family: "Inconsolata", monospace;
+}
+
+.coverage_card {
+    overflow: scroll;
+    background-color: #222324;
+}
+.text_center {
+	text-align: center;
+}
+
+.text_mono {
+	font-family: "Inconsolata", monospace;
+	font-weight: 100;
+}
+.chart_wrapper {
+    width: 100%;
+    height: auto;;
+}

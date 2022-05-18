@@ -31,6 +31,13 @@ func main() {
 	// 1. Able to recover when connect to DB fails
 	e.Use(middleware.Recover())
 
+	if conf.AppConfig.AppEnv == "local" {
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"http://localhost:3009"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		}))
+	}
+
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte(conf.AppConfig.SessionSecret))))
 
 	// All routes for this application
