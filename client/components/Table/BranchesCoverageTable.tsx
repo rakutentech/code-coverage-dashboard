@@ -63,7 +63,7 @@ export const BranchesCoverageTable = (props:Props) => {
                           }
                       </td>
                       <td width="10%">
-                        <a target="_blank" rel="noreferrer" href={`${apiURL}/assets/${orgName}/${data[key].branch_name.replace (/\//g, "_fs_")}`}>
+                        <a target="_blank" rel="noreferrer" href={`${apiURL}/assets/${orgName}/${data[key].branch_name.replace (/\//g, "_fs_")}/`}>
                             artifacts
                         </a>
                         {data[key].link}
