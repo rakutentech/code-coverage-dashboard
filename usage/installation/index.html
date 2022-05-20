@@ -22,7 +22,7 @@ on push / on pull request : Publish code coverage report     The Action triggere
 <meta name=twitter:title content="Github Actions">
 <meta name=twitter:description content="To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.
 on push / on pull request : Publish code coverage report     The Action triggered by on push / on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.">
-<script type=application/ld+json>{"@context":"http://schema.org","@type":"TechArticle","articleSection":"Usage","name":"Github Actions","url":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/","headline":"Github Actions","description":"To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.\non push \/ on pull request : Publish code coverage report     The Action triggered by on push \/ on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.","wordCount":"240","inLanguage":"en","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/"},"copyrightHolder":"Code Coverage Dashboard","copyrightYear":"0001","dateCreated":"0001-01-01T00:00:00.00Z","datePublished":"0001-01-01T00:00:00.00Z","dateModified":"0001-01-01T00:00:00.00Z","publisher":{"@type":"Organization","name":"Code Coverage Dashboard","url":"https://rakutentech.github.io/code-coverage-dashboard/","logo":{"@type":"ImageObject","url":"https://rakutentech.github.io/code-coverage-dashboard/brand.svg","width":"32","height":"32"}}}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"TechArticle","articleSection":"Usage","name":"Github Actions","url":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/","headline":"Github Actions","description":"To use the Code Coverage Dashboard, you need to host the Code Coverage Dashboard server in your environment first and then add the following 2 actions to the repository.\non push \/ on pull request : Publish code coverage report     The Action triggered by on push \/ on pull request will post a report to the Code Coverage Dashboard that hosted on your environment. This will comment the coverage result to PR if on pull request.","wordCount":"275","inLanguage":"en","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https://rakutentech.github.io/code-coverage-dashboard/usage/installation/"},"copyrightHolder":"Code Coverage Dashboard","copyrightYear":"0001","dateCreated":"0001-01-01T00:00:00.00Z","datePublished":"0001-01-01T00:00:00.00Z","dateModified":"0001-01-01T00:00:00.00Z","publisher":{"@type":"Organization","name":"Code Coverage Dashboard","url":"https://rakutentech.github.io/code-coverage-dashboard/","logo":{"@type":"ImageObject","url":"https://rakutentech.github.io/code-coverage-dashboard/brand.svg","width":"32","height":"32"}}}</script>
 <script src=/code-coverage-dashboard/js/main-4f8bb62c.bundle.min.js></script>
 <link rel=preload as=font href=/code-coverage-dashboard/fonts/Metropolis.woff2 type=font/woff2 crossorigin=anonymous>
 <link rel=preload as=font href=/code-coverage-dashboard/fonts/LiberationSans.woff2 type=font/woff2 crossorigin=anonymous>
@@ -305,16 +305,28 @@ Parameters (on push / on pull request)
 <td style=text-align:left>Coverage coverage report name that should be under report_dir.</td>
 </tr>
 <tr>
+<td style=text-align:left>ui_host</td>
+<td style=text-align:center>✕</td>
+<td style=text-align:left>https://&lt; your-host >/coverages-ui</td>
+<td style=text-align:left>Optional. Code Coverage UI host. [ Default: &lt; api_host >/../coverages-ui ]</td>
+</tr>
+<tr>
 <td style=text-align:left>working_dir</td>
 <td style=text-align:center>✕</td>
 <td style=text-align:left>./sub_directory</td>
-<td style=text-align:left>Optional. Used for specifying the sub directory that working on. Default parameter is current directory (./).</td>
+<td style=text-align:left>Optional. Used for specifying the sub directory that working on. [ Default: ./ (current directory) ].</td>
 </tr>
 <tr>
 <td style=text-align:left>report_html_path</td>
 <td style=text-align:center>✕</td>
 <td style=text-align:left>build/coverage.html</td>
-<td style=text-align:left>Optional. Code Coverage HTML path. It is used for the &ldquo;View Code Coverage&rdquo; link in a Pull Request comment.</td>
+<td style=text-align:left>Optional. Code Coverage HTML path. It is used for the &ldquo;View Code Coverage&rdquo; link in a Pull Request comment. [ Default: "" (empty) ]</td>
+</tr>
+<tr>
+<td style=text-align:left>skip_pr_comment</td>
+<td style=text-align:center>✕</td>
+<td style=text-align:left>true</td>
+<td style=text-align:left>Optional. Enable to skip Pull Request comment. [ Default: false ]</td>
 </tr>
 </tbody>
 </table> </div>
