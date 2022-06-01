@@ -64,7 +64,20 @@ export const AuthorCoverageChart = (props:Props) => {
     <div className={styles.chart_wrapper}>
         <Bar
             options={{
-                indexAxis: 'x'
+                indexAxis: 'x',
+                scales: {
+                    x: {
+                        title: {
+                            display: false,
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Covergae Percentage",
+                        },
+                    },
+                }
             }}
             data={cdata}
         />

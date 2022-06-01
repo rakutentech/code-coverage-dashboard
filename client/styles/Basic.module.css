@@ -48,3 +48,11 @@
     width: 100%;
     height: auto;;
 }
+a.external_link {
+    border-bottom: 1px dotted;
+}
+a.external_link:hover {
+    border-bottom: 1px solid;
+    text-decoration: none;
+    color: #8c9de9;
+}

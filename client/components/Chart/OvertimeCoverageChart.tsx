@@ -60,6 +60,19 @@ export const OvertimeCoverageChart = (props:Props) => {
             options={{
                 // make it horizontal
                 indexAxis: 'x',
+                scales: {
+                    x: {
+                        title: {
+                            display: false,
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Covergae Percentage",
+                        },
+                    },
+                }
             }}
             data={cdata}
         />

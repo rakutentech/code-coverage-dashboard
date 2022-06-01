@@ -24,11 +24,12 @@ type BadgeRequest struct {
 
 // CoveragesPaginateRequest for the /Coverages
 type CoveragesPaginateRequest struct {
-	OrgName  string `form:"org_name" query:"org_name" json:"org_name" hint:"To filter by org name"`
-	RepoName string `form:"repo_name" query:"repo_name" json:"repo_name" hint:"To filter by repository name"`
-	Full     bool   `form:"full" query:"full" json:"full" hint:"To include all history for trends"`
-	PerPage  int    `form:"per_page" query:"per_page" json:"per_page" hint:"Limit for per page"`
-	Page     int64  `form:"p" query:"p" json:"p" validate:"gte=0"  message:"p greater than 0" hint:"Page number for pagination"`
+	OrgName      string `form:"org_name" query:"org_name" json:"org_name" hint:"To filter by org name"`
+	RepoName     string `form:"repo_name" query:"repo_name" json:"repo_name" hint:"To filter by repository name"`
+	CommitAuthor string `form:"commit_author" query:"commit_author" json:"commit_author" hint:"To filter by commit author"`
+	Full         bool   `form:"full" query:"full" json:"full" hint:"To include all history for trends"`
+	PerPage      int    `form:"per_page" query:"per_page" json:"per_page" hint:"Limit for per page"`
+	Page         int64  `form:"p" query:"p" json:"p" validate:"gte=0"  message:"p greater than 0" hint:"Page number for pagination"`
 }
 
 type CoveragesPaginateResponse struct {
@@ -206,7 +207,7 @@ func (h *CoveragesHandler) CoveragesPaginate(c echo.Context) error {
 
 	// process request
 	// TODO: after Github Auth, verify user's org and repo and only return those results
-	paginator, coverages, err := h.coveragesRepository.PaginateCoverages(c.Request(), request.OrgName, request.RepoName, request.Full, request.PerPage)
+	paginator, coverages, err := h.coveragesRepository.PaginateCoverages(c.Request(), request.OrgName, request.RepoName, request.CommitAuthor, request.Full, request.PerPage)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}

@@ -55,7 +55,7 @@ func (r *CoveragesRepository) NewCoverage(orgName, repoName, branchName, commitH
 }
 
 // PaginateCoverages...
-func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, full bool, perPage int) (*pagination.Paginator, []models.Coverage, error) {
+func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, commitAuthor string, full bool, perPage int) (*pagination.Paginator, []models.Coverage, error) {
 	var coverages = []models.Coverage{}
 	query := ""
 	if full {
@@ -72,6 +72,11 @@ func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName s
 		query += ` AND repo_name = ?`
 	} else {
 		query += ` AND repo_name != ?`
+	}
+	if commitAuthor != "" {
+		query += ` AND commit_author = ?`
+	} else {
+		query += ` AND commit_author != ?`
 	}
 
 	var total int64
