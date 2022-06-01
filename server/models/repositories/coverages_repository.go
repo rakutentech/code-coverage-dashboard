@@ -81,7 +81,7 @@ func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName s
 
 	var total int64
 	var paginator = &pagination.Paginator{}
-	r.db.Where(query, orgName, repoName).Find(&coverages).Count(&total)
+	r.db.Where(query, orgName, repoName, commitAuthor).Find(&coverages).Count(&total)
 	// the implementation is is incomplete, this should paginate by org name instead of branches per repo
 	paginator = pagination.NewPaginator(request, perPage, total)
 	offset := paginator.Offset()
