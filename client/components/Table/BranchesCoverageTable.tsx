@@ -32,21 +32,23 @@ export const BranchesCoverageTable = (props:Props) => {
               {Object.keys(data).map(key =>
                   <tr key={data[key].id}>
                       <td width="20%">
-                        <a target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/tree/${data[key].branch_name}`}>
+                        <a className={styles.external_link} target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/tree/${data[key].branch_name}`}>
                             {data[key].branch_name.substring(0, truncateBranchNameToChars)}
                             {data[key].branch_name.length > truncateBranchNameToChars && '...'}
                         </a>
                       </td>
                       <td width="5%">{data[key].language}</td>
                       <td width="10%">
-                          <a target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/commit/${data[key].commit_hash}`}>
+                          <a className={styles.external_link} target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/commit/${data[key].commit_hash}`}>
                             {data[key].commit_hash.substring(0, truncateCommitHashToChars)}
                           </a>
                       </td>
                       <td width="20%">
-                          <a target="_blank" rel="noreferrer" href={`${githubURL}/${data[key].commit_author}`}>
-                            {data[key].commit_author}
-                          </a>
+                            <Link href={"/" + data[key].org_name + "/user/" + data[key].commit_author}>
+                                <a className='ml-2'>
+                                    {data[key].commit_author}
+                                </a>
+                            </Link>
                       </td>
                       <td width="10%">
                           {mainPercentage === 0 &&

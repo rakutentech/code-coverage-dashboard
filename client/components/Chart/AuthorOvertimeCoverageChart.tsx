@@ -1,40 +1,45 @@
 import styles from '../../styles/Basic.module.css'
 import {Coverage} from '../../interfaces'
+import moment from 'moment'
 
-import { Chart as ChartJS, CategoryScale, LinearScale, BarController, BarElement } from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarController, BarElement, PointElement, LineElement } from "chart.js";
 ChartJS.register(CategoryScale);
 ChartJS.register(LinearScale);
 ChartJS.register(BarController);
 ChartJS.register(BarElement);
-import { Bar } from 'react-chartjs-2'
+ChartJS.register(PointElement);
+ChartJS.register(LineElement);
+import { Line } from 'react-chartjs-2'
 
 
 interface Props {
     data: {string: Coverage[]};
     orgName: string;
+    commitAuthor: string;
 }
-export const BranchesCoverageChart = (props:Props) => {
-    const {orgName, data} = props
-    let branches: string[] = []
+export const AuthorOvertimeCoverageChart = (props:Props) => {
+    const {orgName, commitAuthor, data} = props
+    let dates: string[] = []
     let percentages: Number[] = []
     Object.keys(data).map(orgName => {
-        // check if already in array, no need to push to avoid unnecessary duplicates
-        // especially for the page where details are shown
-        // which has deleted branches as well
-        if (branches.indexOf(data[orgName].branch_name) === -1) {
-            branches.push(data[orgName].branch_name)
+        if (data[orgName].commit_author !== commitAuthor) {
+            return
+        }
+        let dateF = moment(data[orgName].updated_at, 'YYYY-MM-DD HH:SS').format('YYYY-MM-DD HH:SS')
+        if (!dates.includes(dateF)) {
+            dates.push(dateF)
             percentages.push(parseFloat(data[orgName].percentage))
         }
     })
 
     const cdata = {
-        labels: branches,
+        labels: dates,
         datasets: [
           {
             label: 'My First dataset',
             fill: false,
             lineTension: 0.1,
-            backgroundColor: '#0f91e8',
+            backgroundColor: 'rgba(255,99,132,0.2)',
             borderColor: 'rgba(75,192,192,1)',
             // borderCapStyle: 'butt',
             borderDash: [],
@@ -55,20 +60,21 @@ export const BranchesCoverageChart = (props:Props) => {
       };
     return (
     <div className={styles.chart_wrapper}>
-        <Bar
+        <Line
             options={{
                 // make it horizontal
-                indexAxis: 'y',
+                indexAxis: 'x',
                 scales: {
                     x: {
                         title: {
                             display: true,
-                            text: "Covergae Percentage",
+                            text: "Commit Author",
                         },
                     },
                     y: {
                         title: {
-                            display: false,
+                            display: true,
+                            text: "Covergae Percentage",
                         },
                     },
                 }
