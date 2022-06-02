@@ -35,7 +35,6 @@ steps:
 | coverage_xml_file_name |    ◯     | coverage.xml                              | Coverage coverage report name that should be under report_dir.|
 | ui_host                |    ✕     | https://< your-host >/coverages-ui        | Optional. Code Coverage UI host. [ Default: < api_host >/../coverages-ui ] |
 | working_dir            |    ✕     | ./sub_directory                           | Optional. Used for specifying the sub directory that working on. [ Default: ./ (current directory) ].|
-| report_html_path       |    ✕     | build/coverage.html                       | Optional. Code Coverage HTML path. It is used for the "View Code Coverage" link in a Pull Request comment. [ Default: "" (empty) ]|
 | skip_pr_comment        |    ✕     | true                                      | Optional. Enable to skip Pull Request comment. [ Default: false ]|
 
 <br>

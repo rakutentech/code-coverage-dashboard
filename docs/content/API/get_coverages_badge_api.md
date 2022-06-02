@@ -14,7 +14,7 @@ query:"subtitle" json:"subtitle"`
 ```
 
 ```curl
-localhost:3000/coverages-api/badge\
+localhost:3006/coverages-api/badge\
 ?org_name=<org-name>\
 &repo_name=<repo-name>\
 &branch_name=<branch-name>\

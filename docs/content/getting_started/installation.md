@@ -4,6 +4,8 @@ title: "Installation"
 
 # Using Docker
 
+Not implemented yet
+
 ```sh
 docker-compose up -d
 ```
@@ -63,6 +65,7 @@ caddy file-server --root ./server/assets --listen localhost:3008 --browse
 
 ```sh
 cp client/.env.local cp client/.env
-yarn build
-yarn start
+pnpm install
+pnpm build
+pnpm start
 ```

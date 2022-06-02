@@ -7,7 +7,7 @@ Paginated list of coverages for all orgs and repos. <br>
 
 
 ```sh
-curl localhost:3000/coverages-api?p=1
+curl localhost:3006/coverages-api?p=1
 ```
 
 Request

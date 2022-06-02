@@ -35,7 +35,11 @@
 
 https://rakutentech.github.io/code-coverage-dashboard/
 
+# Screenshots
+
+
 
 # Changelog
 
 - Initial Release
+- Front end added trends and graphs

@@ -30,10 +30,6 @@ inputs:
     description: "working directory"
     required: false
     default: "./"
-  report_html_path:
-    description: "Coverage report path from directory root"
-    required: false
-    default: ""
   skip_pr_comment:
     description: "If true, not comment on the Pull Request"
     required: false
@@ -84,7 +80,6 @@ runs:
         echo "    language              : ${{ inputs.language }}"
         echo "    report_dir            : ${{ inputs.report_dir }}"
         echo "    coverage_xml_file_name: ${{ inputs.coverage_xml_file_name }}"
-        echo "    report_html_path      : ${{ inputs.report_html_path }}"
         echo "    skip_pr_comment       : ${{ inputs.skip_pr_comment }}"
         echo "    working_dir           : ${{ inputs.working_dir }}"
 
@@ -158,8 +153,8 @@ runs:
         echo "##[set-output name=current_branch_badge_url;]${current_branch_badge_url}"
         echo "##[set-output name=base_branch_badge_url;]${base_branch_badge_url}"
         echo "##[set-output name=improvement;]${improvement:-NaN}"
-        echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
-        echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/${{ inputs.report_html_path }}"
+        echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}"
+        echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}"
         if [[ -n "${{ inputs.ui_host }}" ]]; then
           echo "##[set-output name=ui_host;]${{ inputs.ui_host }}/${{ github.repository_owner }}/${{ github.event.repository.name }}"
         else

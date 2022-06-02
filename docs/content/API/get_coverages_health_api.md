@@ -6,7 +6,7 @@ Health Check endpoint
 
 
 ```sh
-curl localhost:3000/coverages-api/health
+curl localhost:3006/coverages-api/health
 ```
 
 Response

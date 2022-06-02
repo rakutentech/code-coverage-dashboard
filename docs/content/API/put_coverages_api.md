@@ -17,5 +17,5 @@ curl \
   "commit_hash": "abc",
   "active_branches": ["develop", "master"]
 }' \
-"http://localhost:3000/coverages-api"
+"http://localhost:3006/coverages-api"
 ```
