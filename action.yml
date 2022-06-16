@@ -113,7 +113,10 @@ runs:
       name: Publish Code Coverage
       working-directory: "${{ inputs.working_dir }}"
       run: |
+        touch coverage-api-output.json
+        response_code=$(
         curl \
+        -s -v -o coverage-api-output.json -w '%{response_code}' \
         -X POST \
         -H 'Content-Type: multipart/form-data' \
         -H 'Authorization: ${{ github.token }}' \
@@ -126,7 +129,12 @@ runs:
         &commit_hash=${{ github.sha }}\
         &commit_author=${{ github.actor }}\
         &language=${{ inputs.language }}\
-        &coverage_xml_file_name=${{ inputs.coverage_xml_file_name }}" > coverage-api-output.json
+        &coverage_xml_file_name=${{ inputs.coverage_xml_file_name }}"
+        )
+        if [[ $response_code -lt 200 ]] || [[ $response_code -ge 400 ]]; then
+          echo "Failed to request code coverage API..."
+          exit 1
+        fi
         echo "##[set-output name=coverage_result]$(cat coverage-api-output.json)"
       shell: bash
 
