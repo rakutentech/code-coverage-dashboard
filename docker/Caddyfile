@@ -1,0 +1,5 @@
+:3008
+
+root * /usr/local/code-coverage-dashboard/server/assets
+
+file_server browse

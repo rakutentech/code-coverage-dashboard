@@ -1,0 +1,62 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx/confs:/etc/nginx/conf.d:ro
+    ports:
+      - "8080:8080"
+    links:
+      - server_api
+      - server_assets
+      - client
+    networks:
+      - app
+  server_api:
+    working_dir: /usr/local/code-coverage-dashboard/server
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.server
+    tty: true
+    volumes:
+      - ./server/:/usr/local/code-coverage-dashboard/server/
+    ports:
+      - "3006:3000"
+    command: /bin/ash ./watch.sh
+    networks:
+      - app
+  server_assets:
+    working_dir: /usr/local/code-coverage-dashboard/server
+    image: caddy:2.4.6-alpine
+    tty: true
+    volumes:
+      - ./server/:/usr/local/code-coverage-dashboard/server/
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "3008:3008"
+    networks:
+      - app
+  client:
+    working_dir: /usr/local/code-coverage-dashboard/client
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.client
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./client/:/usr/local/code-coverage-dashboard/client/
+    ports:
+      - "3009:3009"
+    # set next server side request on port 3006 redirect to server_api in side docker network
+    command: >
+      /bin/sh -c "
+      redir --lport=3006 --cport=3000 --caddr=$$(dig +short server_api) &
+      pnpm install &&
+      pnpm dev
+      "
+    networks:
+      - app
+networks:
+  app:
+    driver: bridge

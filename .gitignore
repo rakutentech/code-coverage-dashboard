@@ -36,6 +36,7 @@ docs/.hugo_build.lock
 # dependencies
 client/node_modules
 client/.pnp
+client/.pnpm-store
 .pnp.js
 
 # testing
