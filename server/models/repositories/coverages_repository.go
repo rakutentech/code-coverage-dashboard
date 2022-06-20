@@ -6,6 +6,7 @@ import (
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/rakutentech/code-coverage-dashboard/app"
+	"github.com/rakutentech/code-coverage-dashboard/config"
 	"github.com/rakutentech/code-coverage-dashboard/models"
 	"gorm.io/gorm"
 )
@@ -55,7 +56,8 @@ func (r *CoveragesRepository) NewCoverage(orgName, repoName, branchName, commitH
 }
 
 // PaginateCoverages...
-func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, commitAuthor string, full bool, perPage int) (*pagination.Paginator, []models.Coverage, error) {
+func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName string, repoName string, commitAuthor string, keyword string, full bool, perPage int) (*pagination.Paginator, []models.Coverage, error) {
+	c := config.NewConfig()
 	var coverages = []models.Coverage{}
 	query := ""
 	if full {
@@ -64,29 +66,44 @@ func (r *CoveragesRepository) PaginateCoverages(request *http.Request, orgName s
 		query += `deleted_at IS NULL`
 	}
 	if orgName != "" {
-		query += ` AND org_name = ?`
+		query += ` AND org_name = @orgName`
 	} else {
-		query += ` AND org_name != ?`
+		query += ` AND org_name != @orgName`
 	}
 	if repoName != "" {
-		query += ` AND repo_name = ?`
+		query += ` AND repo_name = @repoName`
 	} else {
-		query += ` AND repo_name != ?`
+		query += ` AND repo_name != @repoName`
 	}
 	if commitAuthor != "" {
-		query += ` AND commit_author = ?`
+		query += ` AND commit_author = @commitAuthor`
 	} else {
-		query += ` AND commit_author != ?`
+		query += ` AND commit_author != @commitAuthor`
+	}
+	if keyword != "" {
+		if c.DBConfig.DBConnection == "sqlite" {
+			query += ` AND org_name || '/' || repo_name LIKE @keyword`
+		} else {
+			// mysql
+			query += ` AND CONCAT(org_name, '/', repo_name) LIKE @keyword`
+		}
 	}
 
 	var total int64
 	var paginator = &pagination.Paginator{}
-	r.db.Where(query, orgName, repoName, commitAuthor).Find(&coverages).Count(&total)
+	var queryMap = map[string]interface{}{
+		"orgName":      orgName,
+		"repoName":     repoName,
+		"commitAuthor": commitAuthor,
+		"keyword":      "%" + keyword + "%",
+	}
+	r.db.Where(query, queryMap).Find(&coverages).Count(&total)
+
 	// the implementation is is incomplete, this should paginate by org name instead of branches per repo
 	paginator = pagination.NewPaginator(request, perPage, total)
 	offset := paginator.Offset()
 
-	r.db.Limit(perPage).Order("created_at asc").Offset(offset).Where(query, orgName, repoName).Find(&coverages)
+	r.db.Limit(perPage).Order("created_at asc").Offset(offset).Where(query, queryMap).Find(&coverages)
 	return paginator, coverages, nil
 }
 
