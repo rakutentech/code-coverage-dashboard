@@ -1,0 +1,10 @@
+FROM golang:1.18.0-alpine3.15
+
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+WORKDIR /usr/local/code-coverage-dashboard/server
+COPY ./server /usr/local/code-coverage-dashboard/server
+
+RUN apk add --no-cache git alpine-sdk build-base gcc && \
+    go install github.com/cespare/reflex@v0.3.1

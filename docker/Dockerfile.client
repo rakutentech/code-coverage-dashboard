@@ -1,0 +1,11 @@
+FROM node:16-alpine3.14
+
+COPY docker/redir.c /usr/src/redir.c
+
+# Install redir and dig
+RUN apk add --update alpine-sdk bind-tools && \
+    gcc /usr/src/redir.c -o /usr/bin/redir && \
+    strip /usr/bin/redir && \
+    apk del alpine-sdk
+
+RUN npm install -g pnpm
