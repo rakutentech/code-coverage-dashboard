@@ -12,7 +12,10 @@
 .text_success {
 	color: #28a745 !important;
 }
-
+.dark_mode {
+    color: #d5dfe8;
+    background-color: #222324;
+}
 .coverage_total {
 	font-size: 40px;
 	font-weight: 700;
