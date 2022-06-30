@@ -8,13 +8,15 @@
 .text_crimson {
 	color: #dc143c !important;
 }
-
 .text_success {
 	color: #28a745 !important;
 }
 .dark_mode {
     color: #d5dfe8;
     background-color: #222324;
+}
+.dark_mode::placeholder {
+    color: #555555;
 }
 .coverage_total {
 	font-size: 40px;
