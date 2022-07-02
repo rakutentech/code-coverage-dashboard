@@ -18,7 +18,7 @@ type BadgeRequest struct {
 	OrgName    string `form:"org_name" query:"org_name" json:"org_name"  validate:"required" message:"org_name is required"`
 	RepoName   string `form:"repo_name" query:"repo_name" json:"repo_name"  validate:"required" message:"repo_name is required"`
 	BranchName string `form:"branch_name" query:"branch_name" json:"branch_name"  validate:"required" message:"branch_name is required"`
-	Language   string `form:"language" query:"language" json:"language"  validate:"required,oneof=go php js" message:"language must be either go or php or js"`
+	Language   string `form:"language" query:"language" json:"language"  validate:"required,oneof=go php js java clover" message:"language must be either go or php or js or java or clover"`
 	Subtitle   string `form:"subtitle" query:"subtitle" json:"subtitle"`
 }
 
@@ -46,7 +46,7 @@ type CoveragesUploadRequest struct {
 	BranchName          string `form:"branch_name" query:"branch_name" json:"branch_name"  validate:"required" message:"branch_name is required"`
 	CommitHash          string `form:"commit_hash" query:"commit_hash" json:"commit_hash"  validate:"required" message:"commit_hash is required"`
 	CommitAuthor        string `form:"commit_author" query:"commit_author" json:"commit_author"  validate:"required" message:"commit_author is required"`
-	Language            string `form:"language" query:"language" json:"language"  validate:"required,oneof=go php js" message:"language must be either go or php or js"`
+	Language            string `form:"language" query:"language" json:"language"  validate:"required,oneof=go php js java clover" message:"language must be either go or php or js or java or clover"`
 	CoverageXMLFileName string `form:"coverage_xml_file_name" query:"coverage_xml_file_name" json:"coverage_xml_file_name"  validate:"required" message:"please provide the coverage.xml filename"`
 }
 

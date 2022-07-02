@@ -8,10 +8,19 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/k0kubun/pp"
 )
 
+type CoverageXMLJacoco struct {
+	Counter []struct {
+		Text    string `xml:",chardata"`
+		Type    string `xml:"type,attr"`
+		Missed  string `xml:"missed,attr"`
+		Covered string `xml:"covered,attr"`
+	} `xml:"counter"`
+}
 type CoverageXMLGO struct {
 	LineRate float64 `xml:"line-rate,attr"`
 }
@@ -69,6 +78,16 @@ func (s *CoverageService) ParseCoveragePercentage(coverageXMLPath string) (float
 	if err != nil {
 		return 0.0, err
 	}
+
+	if percentage > 0.0 {
+		return percentage, nil
+	}
+
+	// Since previous parse was not able to parse the coverage, try with PHPUnit.
+	percentage, err = s.parseJacoco(coverageXMLPath)
+	if err != nil {
+		return 0.0, err
+	}
 	if percentage > 0.0 {
 		return percentage, nil
 	}
@@ -93,6 +112,31 @@ func (s *CoverageService) parseClover(coverageXMLPath string) (float64, error) {
 
 	percentage := coverageXMLGO.LineRate * 100
 	return roundNearest(percentage), nil
+}
+
+func (s *CoverageService) parseJacoco(coverageXMLPath string) (float64, error) {
+	log.Println("parseJacoco")
+	//#nosec G304
+	data, err := ioutil.ReadFile(coverageXMLPath)
+	if err != nil {
+		return 0.0, err
+	}
+	coverageXMLJacoco := &CoverageXMLJacoco{}
+	err = xml.Unmarshal([]byte(data), &coverageXMLJacoco)
+	if err != nil {
+		return 0.0, err
+	}
+	log.Print(pp.Sprint("CoverageXMLJacoco: ", coverageXMLJacoco))
+	for _, counter := range coverageXMLJacoco.Counter {
+		if counter.Type == "LINE" {
+			covered, _ := strconv.ParseInt(counter.Covered, 10, 64)
+			missed, _ := strconv.ParseInt(counter.Missed, 10, 64)
+			percentage := float64(covered) / float64(covered+missed) * 100
+			return roundNearest(percentage), nil
+		}
+	}
+
+	return 0.0, nil
 }
 
 func (s *CoverageService) parsePHPUnit(coverageXMLPath string) (float64, error) {
