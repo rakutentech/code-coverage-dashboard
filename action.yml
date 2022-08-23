@@ -161,8 +161,8 @@ runs:
         echo "##[set-output name=current_branch_badge_url;]${current_branch_badge_url}"
         echo "##[set-output name=base_branch_badge_url;]${base_branch_badge_url}"
         echo "##[set-output name=improvement;]${improvement:-NaN}"
-        echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}"
-        echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}"
+        echo "##[set-output name=current_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${current_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/"
+        echo "##[set-output name=base_branch_report_url;]${{ inputs.api_host }}/assets/${{ github.repository_owner }}/${{ github.event.repository.name }}/${base_branch_name//\//_fs_}/archive/${{ inputs.report_dir }}/"
         if [[ -n "${{ inputs.ui_host }}" ]]; then
           echo "##[set-output name=ui_host;]${{ inputs.ui_host }}/${{ github.repository_owner }}/${{ github.event.repository.name }}"
         else
