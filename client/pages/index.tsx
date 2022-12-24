@@ -75,13 +75,26 @@ const Home: React.FC<ServerSideProps> = ({ coverages }) => {
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async (ctx) => {
   const apiURL = process.env.apiURL
   const { keyword } = ctx.query
-  const queryURL = `${apiURL}?per_page=10000${keyword ? `&keyword=${keyword}` : ''}`
-  const res = await fetch(queryURL)
-  const coverages = await res.json()
-  return {
-    props: {
-      coverages
-    },
+  const queryURL = `${apiURL}?per_page=10000${keyword ? `&keyword=${keyword}` : ''}`  
+  
+  try {
+    const res = await fetch(queryURL)
+    const coverages = await res.json()
+    return {
+      props: {
+        coverages
+      },
+    }    
+  } catch (err) {
+    console.log(err)
+    return {
+      props: {
+        coverages: {
+          data: {},
+          has_next: false,
+        }
+      },
+    }
   }
 }
 
