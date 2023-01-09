@@ -21,6 +21,10 @@
 
 **Platform:** Github Actions. Jenkins, Bitbucket, Gitlab support is coming soon
 
+# Screenshot
+
+![alt text](https://imgur.com/HBpGKwu.png) 
+
 # Features
 
 - Provides a simple API to store coverage data
