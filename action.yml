@@ -169,14 +169,15 @@ runs:
           echo "##[set-output name=ui_host;]${{ inputs.api_host }}/../coverages-ui/${{ github.repository_owner }}/${{ github.event.repository.name }}"
         fi
 
-    - id: create-comment
+    - uses: actions/github-script@v5
+      id: create-comment
       name: Create comment
       shell: bash
       working-directory: "${{ inputs.working_dir }}"
-      run:
-        echo "COMMENT<<EOF" >> $GITHUB_ENV
-        echo "$COMMENT" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_ENV
+      with:
+        script: |
+          const env = process.env;
+          core.setOutput("comment", env.COMMENT);
       env:
         COMMENT: |
           <!-- __CODE_COVERAGE_${{ inputs.language }}__ -->
@@ -203,14 +204,14 @@ runs:
       if: success() && ${{ github.event.number }} && (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true') && steps.fc.outputs.comment-id == 0
       with:
         issue-number: ${{ github.event.number }}
-        body: ${{ steps.create-comment.outputs.COMMENT }}
+        body: ${{ steps.create-comment.outputs.comment }}
 
     - name: Update Comment
       uses: peter-evans/create-or-update-comment@v2
       if: success() && ${{ github.event.number }} && (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true') && steps.fc.outputs.comment-id != 0
       with:
         issue-number: ${{ github.event.number }}
-        body: ${{ steps.create-comment.outputs.COMMENT }}
+        body: ${{ steps.create-comment.outputs.comment }}
         comment-id: ${{ steps.fc.outputs.comment-id }}
         edit-mode: replace
 
