@@ -6,7 +6,7 @@ jobs:
     name: NodeJS Test
     strategy:
       matrix:
-        node-versions: [16.13]
+        node-versions: [16.14]
     runs-on: ubuntu-latest
     env:
       working_directory: ./client
