@@ -1,5 +1,5 @@
 on: [push]
-name: "CI"
+name: "CI - nodejs -"
 
 jobs:
   test:
@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-versions }}
 
     - name: Setup yarn
-      run: npm install -g pnpm
+      run: npm install -g pnpm@v7
 
     - name: Install dependencies
       working-directory: ${{ env.working_directory }}
