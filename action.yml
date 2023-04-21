@@ -171,7 +171,7 @@ runs:
 
     - id: create-comment
       name: Create comment
-      shell: bach
+      shell: bash
       working-directory: "${{ inputs.working_dir }}"
       run:
         echo "COMMENT=$COMMENT" >> $GITHUB_OUTPUT
