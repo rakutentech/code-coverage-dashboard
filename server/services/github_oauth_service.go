@@ -42,7 +42,11 @@ func (v *GithubOAuthService) VerifyGithubToken(api, token, orgName, repoName, co
 	if err != nil {
 		return fmt.Errorf("error: %s", err.Error())
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("closing body error: %s", err.Error())
+		}
+	}()
 	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("error: %s", resp.Status)
 	}
