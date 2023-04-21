@@ -169,11 +169,9 @@ runs:
           echo "##[set-output name=ui_host;]${{ inputs.api_host }}/../coverages-ui/${{ github.repository_owner }}/${{ github.event.repository.name }}"
         fi
 
-    - uses: actions/github-script@v5
+    - name: Create comment
+      uses: actions/github-script@v5
       id: create-comment
-      name: Create comment
-      shell: bash
-      working-directory: "${{ inputs.working_dir }}"
       with:
         script: |
           const env = process.env;
