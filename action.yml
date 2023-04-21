@@ -174,7 +174,9 @@ runs:
       shell: bash
       working-directory: "${{ inputs.working_dir }}"
       run:
-        echo "COMMENT=$COMMENT" >> $GITHUB_OUTPUT
+        echo "COMMENT<<EOF" >> $GITHUB_ENV
+        echo "$COMMENT" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_ENV
       env:
         COMMENT: |
           <!-- __CODE_COVERAGE_${{ inputs.language }}__ -->
