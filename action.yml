@@ -169,14 +169,15 @@ runs:
           echo "##[set-output name=ui_host;]${{ inputs.api_host }}/../coverages-ui/${{ github.repository_owner }}/${{ github.event.repository.name }}"
         fi
 
-    - name: Add comment
-      # NOTE: Given boolean value treat as string value.
-      #       Please see the detail on this issue https://github.com/actions/runner/issues/1483
-      if: (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true')
-      uses: peter-evans/create-or-update-comment@v1
-      with:
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
+    - id: create-comment
+      name: Create comment
+      shell: bach
+      working-directory: "${{ inputs.working_dir }}"
+      run:
+        echo "COMMENT=$COMMENT" >> $GITHUB_OUTPUT
+      env:
+        COMMENT: |
+          <!-- __CODE_COVERAGE_${{ inputs.language }}__ -->
           ![Badge](${{ steps.set_coverage_comment.outputs.base_branch_badge_url }}) ![Badge](${{ steps.set_coverage_comment.outputs.current_branch_badge_url }}%25)
 
           :rocket: [View Code Coverage](${{ steps.set_coverage_comment.outputs.ui_host }})
@@ -185,6 +186,31 @@ runs:
           |:--|---:|---:|
           | [${{ github.event.pull_request.base.ref }}](${{ steps.set_coverage_comment.outputs.base_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.base_branch_percent }}% | - |
           | [${{ steps.branch-name.outputs.current_branch }}](${{ steps.set_coverage_comment.outputs.current_branch_report_url }}) | ${{ steps.set_coverage_comment.outputs.current_branch_percent }}% | ${{ steps.set_coverage_comment.outputs.improvement }}% |
+
+    # Create or update comment
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      if: success() && ${{ github.event.number }} && (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true')
+      id: fc
+      with:
+        issue-number: ${{ github.event.number }}
+        body-includes: '<!-- __CODE_COVERAGE_${{ inputs.language }}__ -->'
+
+    - name: Create Comment
+      uses: peter-evans/create-or-update-comment@v2
+      if: success() && ${{ github.event.number }} && (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true') && steps.fc.outputs.comment-id == 0
+      with:
+        issue-number: ${{ github.event.number }}
+        body: ${{ steps.create-comment.outputs.COMMENT }}
+
+    - name: Update Comment
+      uses: peter-evans/create-or-update-comment@v2
+      if: success() && ${{ github.event.number }} && (github.event_name == 'pull_request') && (inputs.skip_pr_comment != 'true') && steps.fc.outputs.comment-id != 0
+      with:
+        issue-number: ${{ github.event.number }}
+        body: ${{ steps.create-comment.outputs.COMMENT }}
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        edit-mode: replace
 
     # on delete: sync branches
     - name: Set up Python
