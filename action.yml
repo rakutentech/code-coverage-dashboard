@@ -192,7 +192,7 @@ runs:
     # Create or update comment
     - name: Find Comment
       uses: peter-evans/find-comment@v2
-      if: ${{ github.event_name == 'pull_request' }} && ${{ success() }} && ${{ inputs.skip_pr_comment != 'true' }}
+      if: github.event_name == 'pull_request' && success() && inputs.skip_pr_comment != 'true'
       id: fc
       with:
         issue-number: ${{ github.event.number }}
@@ -200,14 +200,14 @@ runs:
 
     - name: Create Comment
       uses: peter-evans/create-or-update-comment@v2
-      if: ${{ github.event_name == 'pull_request' }} && ${{ success() }} && ${{ inputs.skip_pr_comment != 'true' }} && ${{ steps.fc.outputs.comment-id == 0 }}
+      if: github.event_name == 'pull_request' && success() && inputs.skip_pr_comment != 'true' && steps.fc.outputs.comment-id == 0
       with:
         issue-number: ${{ github.event.number }}
         body: ${{ steps.create-comment.outputs.comment }}
 
     - name: Update Comment
       uses: peter-evans/create-or-update-comment@v2
-      if: ${{ github.event_name == 'pull_request' }} && ${{ success() }} && ${{ inputs.skip_pr_comment != 'true' }} && ${{ steps.fc.outputs.comment-id != 0 }}
+      if: github.event_name == 'pull_request' && success() && inputs.skip_pr_comment != 'true' && steps.fc.outputs.comment-id != 0
       with:
         issue-number: ${{ github.event.number }}
         body: ${{ steps.create-comment.outputs.comment }}
