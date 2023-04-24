@@ -24,7 +24,14 @@ func NewCoveragesRepository() *CoveragesRepository {
 }
 
 // NewCoverage returns first sale
-func (r *CoveragesRepository) NewCoverage(orgName, repoName, branchName, commitHash, commitAuthor, language string, percentage float64) (*models.Coverage, error) {
+func (r *CoveragesRepository) NewCoverage(orgName,
+	repoName,
+	branchName,
+	commitHash,
+	commitAuthor,
+	language string,
+	prNumber int,
+	percentage float64) (*models.Coverage, error) {
 	now := time.Now()
 	query := `org_name = ?
 			AND repo_name = ?
@@ -41,6 +48,7 @@ func (r *CoveragesRepository) NewCoverage(orgName, repoName, branchName, commitH
 		RepoName:     repoName,
 		BranchName:   branchName,
 		CommitHash:   commitHash,
+		PRNumber:     prNumber,
 		CommitAuthor: commitAuthor,
 		Language:     language,
 		Percentage:   percentage,

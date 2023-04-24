@@ -126,6 +126,7 @@ runs:
         &github_api_url=${{ github.api_url }}\
         &branch_name=${{ steps.branch-name.outputs.current_branch }}\
         &repo_name=${{ github.event.repository.name }}\
+        &pr_number=${{ github.event.pull_request.number }}\
         &commit_hash=${{ github.sha }}\
         &commit_author=${{ github.actor }}\
         &language=${{ inputs.language }}\

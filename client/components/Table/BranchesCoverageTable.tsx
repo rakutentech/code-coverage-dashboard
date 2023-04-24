@@ -21,6 +21,7 @@ export const BranchesCoverageTable = (props:Props) => {
           <th scope="col" align="left">Branch</th>
           <th scope="col" align="left">Language</th>
           <th scope="col" align="left">Commit SHA</th>
+          <th scope="col" align="left">PR</th>
           <th scope="col" align="left">Commit Author</th>
           <th scope="col" align="left">Coverage</th>
           <th scope="col" align="left">Report</th>
@@ -41,6 +42,11 @@ export const BranchesCoverageTable = (props:Props) => {
                       <td width="10%">
                           <a className={styles.external_link} target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/commit/${data[key].commit_hash}`}>
                             {data[key].commit_hash.substring(0, truncateCommitHashToChars)}
+                          </a>
+                      </td>
+                      <td width="10%">
+                          <a className={styles.external_link} target="_blank" rel="noreferrer" href={`${githubURL}/${orgName}/pull/${data[key].pr_number}`}>
+                            #{data[key].pr_number}
                           </a>
                       </td>
                       <td width="20%">

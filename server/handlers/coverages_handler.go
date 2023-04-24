@@ -44,6 +44,7 @@ type CoveragesUploadRequest struct {
 	GithubApiURL        string `form:"github_api_url" query:"github_api_url" json:"github_api_url"  validate:"required" message:"github_api_url is required"`
 	RepoName            string `form:"repo_name" query:"repo_name" json:"repo_name"  validate:"required" message:"repo_name is required"`
 	BranchName          string `form:"branch_name" query:"branch_name" json:"branch_name"  validate:"required" message:"branch_name is required"`
+	PRNumber            int    `form:"pr_number" query:"pr_number" json:"pr_number"`
 	CommitHash          string `form:"commit_hash" query:"commit_hash" json:"commit_hash"  validate:"required" message:"commit_hash is required"`
 	CommitAuthor        string `form:"commit_author" query:"commit_author" json:"commit_author"  validate:"required" message:"commit_author is required"`
 	Language            string `form:"language" query:"language" json:"language"  validate:"required,oneof=go php js" message:"language must be either go or php or js"`
@@ -171,6 +172,7 @@ func (h *CoveragesHandler) CoveragesUpload(c echo.Context) error {
 		request.CommitHash,
 		request.CommitAuthor,
 		request.Language,
+		request.PRNumber,
 		coveragePercentage,
 	)
 	log.Println(pp.Sprint(coverage))
