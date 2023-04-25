@@ -1,12 +1,12 @@
 on: [push]
-name: "CI"
+name: "CI - nodejs -"
 
 jobs:
   test:
     name: NodeJS Test
     strategy:
       matrix:
-        node-versions: [16.13]
+        node-versions: [16.14]
     runs-on: ubuntu-latest
     env:
       working_directory: ./client
@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-versions }}
 
     - name: Setup yarn
-      run: npm install -g pnpm
+      run: npm install -g pnpm@v7
 
     - name: Install dependencies
       working-directory: ${{ env.working_directory }}

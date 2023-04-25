@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd">
+<report name="core">
+	<sessioninfo id="104b47b8" start="1656633814188" dump="1656633826531"/>
+	<counter type="INSTRUCTION" missed="2440" covered="2894"/>
+	<counter type="BRANCH" missed="310" covered="123"/>
+	<counter type="LINE" missed="272" covered="464"/>
+	<counter type="COMPLEXITY" missed="286" covered="157"/>
+	<counter type="METHOD" missed="94" covered="131"/>
+	<counter type="CLASS" missed="11" covered="28"/>
+</report>

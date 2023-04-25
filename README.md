@@ -17,7 +17,7 @@
 
 **Analyze:** Track code coverage for your projects
 
-**Languages:** Clover for (Go, PHP, JS)
+**Languages:** Clover for (Go, PHP, JS, Java)
 
 **Platform:** Github Actions. Jenkins, Bitbucket, Gitlab support is coming soon
 
@@ -47,3 +47,4 @@ https://rakutentech.github.io/code-coverage-dashboard/
 
 - Initial Release
 - Front end added trends and graphs
+- Supports Java via Jacoco

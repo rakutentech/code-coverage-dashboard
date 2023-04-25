@@ -35,6 +35,12 @@ func TestFindCoverageXMLPath(t *testing.T) {
 			wantPath: "../test_data/clover_coverage/coverage.xml",
 			errWant:  nil,
 		},
+		{
+			language: "java",
+			folder:   "../test_data/java_coverage/",
+			wantPath: "../test_data/java_coverage/coverage.xml",
+			errWant:  nil,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.language, func(t *testing.T) {
@@ -69,6 +75,12 @@ func TestParseCoveragePercentage(t *testing.T) {
 			language:        "js",
 			coverageXMLPath: "../test_data/clover_coverage/coverage.xml",
 			wantPercentage:  97.91,
+			errWant:         nil,
+		},
+		{
+			language:        "java",
+			coverageXMLPath: "../test_data/java_coverage/coverage.xml",
+			wantPercentage:  63.04,
 			errWant:         nil,
 		},
 	}
